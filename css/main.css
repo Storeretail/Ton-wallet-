@@ -1,0 +1,44 @@
+/* css/global.css */
+:root {
+  --header-height: 50px;
+  --footer-height: 50px;
+  --bg-color: #ffffff;
+  --text-color: #1a1a1a;
+  --accent-color: #3b82f6;
+  --nav-bg: #000000;
+  --nav-text-color: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+}
+
+/* 
+   THE ANTI-HIDING ENGINE:
+   Forces the content area to stay perfectly in between the fixed header 
+   and the bottom navigation bar so no content gets trapped behind them.
+*/
+.content-wrapper {
+  position: absolute;
+  top: var(--header-height);
+  bottom: var(--footer-height);
+  left: 0;
+  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.page-view {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
