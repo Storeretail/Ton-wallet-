@@ -332,9 +332,10 @@
       opacity: 0.7;
     }
 
+    /* Donate button with increased padding */
     .donate-btn {
       width: 100%;
-      padding: 8px;
+      padding: 10px 16px; /* Increased padding */
       background: var(--primary);
       color: #fff;
       border: none;
@@ -406,56 +407,56 @@
   <script>
     const campaigns = [
       {
-        id: "991", category: "education",
+        id: "hustler", category: "education",
         title: "Build a School for 200 Children in Rural Nepal",
         desc: "Help us construct safe classrooms, provide desks, and bring quality education to remote mountain villages.",
         image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80",
         raised: 28450, goal: 45000, endDate: "2026-09-20", goalMetDate: null, donors: 342, urgent: false
       },
       {
-        id: "992", category: "emergency",
+        id: "explore", category: "emergency",
         title: "Emergency Heart Surgery for 8-Year-Old Aisha",
         desc: "Aisha needs safe, life-saving surgery within weeks. Your donation covers hospital costs and post-op care.",
         image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80",
         raised: 41200, goal: 52000, endDate: "2026-09-08", goalMetDate: null, donors: 891, urgent: true
       },
       {
-        id: "993", category: "environment",
+        id: "creator", category: "environment",
         title: "Plant 50,000 Trees in the Amazon Rainforest",
         desc: "Restore degraded land and protect biodiversity by supporting local indigenous communities planting native species.",
         image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
         raised: 42000, goal: 35000, endDate: "2026-10-05", goalMetDate: "2026-09-02", donors: 612, urgent: false
       },
       {
-        id: "994", category: "disaster",
+        id: "flood-relief", category: "disaster",
         title: "Flood Relief & Shelter for 1,200 Families",
         desc: "Provide emergency food, clean water, and safe temporary housing after catastrophic flooding in the region.",
         image: "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=600&q=80",
         raised: 67900, goal: 80000, endDate: "2026-09-15", goalMetDate: null, donors: 1204, urgent: true
       },
       {
-        id: "995", category: "education",
+        id: "stem-girls", category: "education",
         title: "Scholarships for 100 Girls in STEM Programs",
         desc: "Empower young women with access to quality STEM education, mentorship, and career opportunities.",
         image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80",
         raised: 12350, goal: 25000, endDate: "2026-10-15", goalMetDate: null, donors: 276, urgent: false
       },
       {
-        id: "996", category: "health",
+        id: "clean-water", category: "health",
         title: "Clean Water Wells for 15 Villages in Kenya",
         desc: "Install sustainable water wells and train local teams so communities have safe drinking water year-round.",
         image: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=600&q=80",
         raised: 33100, goal: 40000, endDate: "2026-09-12", goalMetDate: null, donors: 648, urgent: false
       },
       {
-        id: "997", category: "medical",
+        id: "cancer-fund", category: "medical",
         title: "Cancer Treatment Fund for Single Mother of Three",
         desc: "Support Maria’s chemotherapy and recovery so she can return home safely to her children cancer-free.",
         image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80",
         raised: 18500, goal: 30000, endDate: "2026-09-28", goalMetDate: null, donors: 412, urgent: false
       },
       {
-        id: "998", category: "emergency",
+        id: "earthquake-aid", category: "emergency",
         title: "Earthquake Recovery Kits for 800 Households",
         desc: "Deliver essential supplies, temporary safe shelters, and medical aid to families affected by the recent quake.",
         image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=600&q=80",
@@ -466,12 +467,17 @@
     let currentCategory = "all";
     let currentSearch = "";
 
+    /* SPA Router method using HTML5 History API */
+    function navigateTo(path) {
+      window.history.pushState({}, "", path);
+      console.log("SPA Route updated to:", window.location.pathname);
+    }
+
     function getCampaignStatus(c) {
       const now = new Date();
       const end = new Date(c.endDate + "T23:59:59");
       const isGoalReached = c.raised >= c.goal;
 
-      // Rule: Keep completed campaigns in feed for 7 days after reaching goal
       if (isGoalReached && c.goalMetDate) {
         const metDate = new Date(c.goalMetDate + "T00:00:00");
         const daysSinceGoalMet = Math.floor((now - metDate) / (1000 * 60 * 60 * 24));
@@ -506,14 +512,12 @@
     function calculateScore(c, status) {
       let score = 0;
 
-      // Rule: Urgent / Emergency campaigns always receive top priority score (+1000)
       if (c.urgent || c.category === "emergency") {
         score += 1000;
       }
 
       const pct = (c.raised / c.goal) * 100;
 
-      // Priority boost for active campaigns that are still accepting over-funding
       if (status.isGoalReached) {
         score += 150; 
       } else {
@@ -637,24 +641,27 @@
                   ${c.donors.toLocaleString()} donors
                 </div>
               </div>
-              <button class="donate-btn" ${btnDisabled ? "disabled" : ""}>${btnText}</button>
+              <button class="donate-btn" type="button" ${btnDisabled ? "disabled" : ""}>${btnText}</button>
             </div>
           </article>`;
       });
 
       grid.innerHTML = html;
 
+      /* Client-side SPA routing delegation */
       grid.querySelectorAll(".campaign-card").forEach(card => {
         card.addEventListener("click", function(e) {
           const campaignId = this.getAttribute("data-id");
 
+          // Clicking donate button pushes donate path to history without full reload
           if (e.target.classList.contains("donate-btn")) {
             e.stopPropagation();
-            window.location.href = `https://mydomain.com/donate/fundraiser/${campaignId}`;
+            navigateTo(`/donate/${campaignId}`);
             return;
           }
 
-          window.location.href = `https://mydomain.com/fundraiser/${campaignId}`;
+          // Clicking the card body pushes direct fundraiser path to history
+          navigateTo(`/${campaignId}`);
         });
       });
     }
