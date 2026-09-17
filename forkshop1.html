@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grand Theft Auto – Standard & Ultimate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', system-ui, sans-serif;
+      background: #fff;
+      color: #111;
+      padding-bottom: 17vh;
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .carousel-track { transition: transform 0.35s ease; }
+
+    .arrow-btn {
+      width: 5%;
+      min-width: 24px;
+      max-width: 32px;
+      background: none;
+      border: none;
+      color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      align-self: center;
+    }
+    .arrow-btn:hover { color: #555; }
+    .arrow-btn i { font-size: 14px; }
+
+    .image-area { width: 95%; pointer-events: none; }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #d1d5db;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .dot.active {
+      background: #111;
+      width: 14px;
+      border-radius: 3px;
+    }
+
+    .info-block { padding: 0 12px; }
+    .info-block h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .info-block p, .info-block li {
+      font-size: 0.8125rem;
+      line-height: 1.55;
+      color: #4b5563;
+    }
+    .info-block strong { font-weight: 600; color: #111; }
+    .info-block ul {
+      list-style: none;
+      margin-top: 6px;
+    }
+    .info-block li {
+      margin-bottom: 6px;
+      padding-left: 14px;
+      position: relative;
+    }
+    .info-block li::before {
+      content: "–";
+      position: absolute;
+      left: 0;
+      color: #111;
+    }
+
+    .meta-list { list-style: none; margin-top: 10px; }
+    .meta-list li {
+      margin-bottom: 4px;
+      padding-left: 0;
+      font-size: 0.8125rem;
+      color: #4b5563;
+    }
+    .meta-list li strong {
+      color: #111;
+      font-weight: 600;
+      min-width: 78px;
+      display: inline-block;
+    }
+
+    /* Fixed bottom bar – 15% of screen height */
+    .fixed-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 15vh;
+      max-height: 15vh;
+      background: #111;
+      z-index: 100;
+      padding: 8px 12px 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+    }
+
+    .fixed-tabs {
+      display: flex;
+      background: #1f1f1f;
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+      height: 28%;
+      min-height: 28px;
+    }
+
+    .fixed-tab {
+      flex: 1;
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: transparent;
+      color: #9ca3af;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.25s ease;
+    }
+    .fixed-tab.active {
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .multi-circle {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+      box-shadow: 0 0 0 1.5px transparent, 0 0 0 2.5px currentColor;
+      opacity: 0.65;
+      transition: all 0.25s ease;
+    }
+    .fixed-tab.active .multi-circle {
+      opacity: 1;
+      border-color: #111;
+      box-shadow: 0 0 0 1.5px #fff, 0 0 0 2.5px #111;
+    }
+
+    .preorder-btn {
+      width: 100%;
+      height: 36%;
+      min-height: 34px;
+      background: #fff;
+      color: #111;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 0 #ccc;
+      position: relative;
+      top: 0;
+    }
+    .preorder-btn:hover { background: #f5f5f5; }
+    .preorder-btn:active {
+      top: 2px;
+      box-shadow: 0 0 0 #ccc;
+      background: #eee;
+    }
+
+    .price-num {
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .logo {
+      height: 60px;
+      width: auto;
+      pointer-events: none;
+      object-fit: contain;
+    }
+
+    .top-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 2px 12px 8px;
+    }
+
+    /* Pay with line */
+    .pay-with {
+      width: 100%;
+      height: 26%;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .pay-with > span {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    .crypto-stack {
+      display: flex;
+      align-items: center;
+    }
+    .crypto-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid #111;
+      margin-left: -6px;
+      flex-shrink: 0;
+      background: #fff;
+      object-fit: cover;
+    }
+    .crypto-icon:first-child { margin-left: 0; }
+    .more-text {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: 400;
+      margin-left: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="w-full">
+
+    <!-- ULTIMATE PANEL (default) -->
+    <div id="panel-ultimate" class="panel active">
+      <div class="top-header">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjdBUAfzlDIx_xNDAwjR_VYcGruY0B_3j-HZsLN7xD5WXgnoK9lyaIcJdYoRFYMhDtbYGDKnlL0Knv0RUm6LSLKV87Mi502hIKDNsC6Ya46YSHhoV_F8-uk-TszKh1c6qw5W6oZOH5kPUTXACrxtCCtef5QjeX6LKN9vqz8mDjY0h7gHWD3rPBEVeQtDB4h/s892/20260917_082241.jpg" alt="Logo" class="logo" />
+        <h1 class="text-lg sm:text-xl font-black tracking-tight">Grand Theft Auto: Ultimate Edition</h1>
+      </div>
+
+      <div class="flex items-center w-full px-1">
+        <button id="ult-prev" class="arrow-btn"><i class="fas fa-chevron-left"></i></button>
+        <div class="image-area relative overflow-hidden border border-gray-200 bg-gray-50 aspect-[16/9]">
+          <div id="ult-track" class="carousel-track flex h-full w-full">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4MfWV480-hYzNJINmH-JSLuh_C4ZKD_iKevMzA-FFfc5JfeJhWfxjeCkN3PWCKKelRZFCTsOzq9qWgqqS0v71p3p8gMfmjY2rlqww8fSWwbbfYJgUcl94xSBBhCCTXDVzZG_ZVyL3a9RYYXrvWewpxxgg8YShu4luBWDm-Os9Im4S6vHMSsdPHxSgOLEz/s768/ULTIMATE_EDITION_01.16qc1xq5nigg1.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 1" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1FGhtpgAp2p8duGJT2Ydt2QtQjDYqXeKvyFxZeeNqovzIJrB3G5BWcd3Qj88rgEr-wBdz3TzndBLzCC6KZcBU1baRRc12roQNwQS-cdB39UWz_pQopnt1ZT3iRaKJdv62EJwYz0vnXdWQtS6Qy86_z3he66ZnnzKb46vYh6Ijjpz5Bq-ZXav6FP8QAbfn/s768/ULTIMATE_EDITION_GROTTI_CHEETAH_01.0a.wy3s_ogjey.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 2" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgX07KqorJ_AxqriWtputBilun_FJYvexa_G4Cw2nHaD6-_IFKPcY1SQVSehbBUhX2LNxsJhaR18Lva0uXR6eVOqRD00txS64Qyeq6xIzNHpVAU5lmNA5yYO5wq8TdmpBNkCy7XC042HLL0XNpvrCXTgHBCQYN309ZQCYn5sMufTh6pOwwNE3KzTw0TEJ2i/s768/ULTIMATE_EDITION_GROTTI_CHEETAH_02.0rkrlsu_dg\~ww.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 3" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj8uZye1dazSg4mFXpTqd9YD_HT0-OfvUO27HIEzO1vM_EPR3Bb6rX2xSqFqNEcf7Sp43axtlpPhnZtao_P_jBtGoq6t4LGdfL8hFfMyAfa2c6QYOOkmglVIAFfHV4JnLRyFI3oAspC6NdotsartSCDjyvoKUdcWIMyvLVCigk_65Id93m-fRZ5kHRWpyR7/s768/ULTIMATE_EDITION_SAFEHOUSE_VEHICLES_01.0wv6pw3t-mky3.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 4" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgMWwgu9olWDflLSKL9LlvfF6Bt6iWn3tItP68LB8Y-E4YeGuf8pBmprBeAXj_Z-eMcQsr8ka6CqXmp9R6MKBgFhzX4LS-h0biDswADMzdbTRK39opY25I3DsSuFJCeoCs_3WC1SDUDUcyZD6cnD19m_L_g_YmJPr2p0ifq8SqwFWV9Hm_ZCNZsikheK7sk/s768/ULTIMATE_EDITION_SARAS_SALON_01.0gn7dwlvcgz17.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 5" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh9iqNgpjhIDTrLS_hyphenhyphenXBp2EYU5CiG-WQ-toEatTxXEsTteS7ctF6dhgp-av9-Zvay1mQPpwtlUgZdD8f0DtErCMw6UwO190tWPi4fsGB_O5N9hoyKxCbd_Z-1AkqmPQ3duDBpy8LPzEpSssBSoXsSTL5RL2hEElM0AT-NSAUznH7XyzRQWPuZ1j-GSizxR/s768/ULTIMATE_EDITION_SQUALO_01.0cim7hj58ypb1.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 6" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjGzLn3GDpgYJpDYH7zihDCeP3LoXxcQfJ8kIfeozvlgMW3MpzChy7nQzjkgSnA6Tz-DR0VyP4PLk-odioN2O1MA1BSG5IXdXjoTjGgav_Y7Lz6zYZ06jqO71_XaK-avd2lefT9oAZ-U_haGYbZSKMgBWwjaVni7XfGxQELGDw_IfmGloF5_p2d1BLVC09y/s768/ULTIMATE_EDITION_SQUALO_03.0quncwrsw97j1.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 7" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhTmillCCn0OE-P6ldD5NZyYNnxb5SVkgcnCc5f0qPbpqtYQPw9jTpfAIh7eVFqh0ikht_ceC_J8sg9v0o2dRZc6zXjSiNDRgbp69k-CjlaXo9xEMD5_H4wrv2zQEqd2k40W20ti0_xOCOa8VZp4LL-JrnZYx2NfkL5ojgsIXSFgwozXs3gzfHaIfLQ4SvY/s768/ULTIMATE_EDITION_STOCK_305_04.0ipze9\~3u6eok.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 8" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFe9gm4XGtu4GiOX5j5N58lyNYQyaLHC9OwWCeBJ8uTv9RkcP-NPOwxw4PzKBgbPF_ydMr_lXeN1DxuGnuejaxDqrWSjgbCiDBqWeXfbvIXu7j-zXZ6lducqP8074VC1y_J6l3A5vELsiwXnibqHUlR1Yuz3vEo4CQdCVDyuCN0KhvwHzdwIL_cKQHxkXe/s768/ULTIMATE_EDITION_VAPID_BUGGY_01.0jxfiql\~371ik.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 9" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgU6Dn2sdhVxI1LZCtZAtFID4QTEDCIZdY5P36W2DsF885cnwXJuU3CkFFD6ssHDNeDrNcCBnWFg9TeAJVUsRCLupAnvA5zrlEJqqxdxN-K8sjoi66_ZZHB6ChuSleiRuO_fEOTApeyibnAOy_5EQc9pn8_hhwVOCIQG3oF-gs-dpQoIxvZ6VFpAaOXFk5I/s768/ULTIMATE_EDITION_ELECTRIC_FANG_02.0a0h59s0zvhgc.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 10" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjDLBWKmdl_CaWoUGUqe9n8Z9I-8vh8-w5Xqe_gBxdl3MOOzx36D_TXK5wemB8gbsSzGK3I37_BIGNR-HiivmcVsfKA9HwKH0-7lKcocYnskvhKZYuNYxWahyLeg1I248AFFRsWOSgrC4BkWWO2zFvIlfatkHcUOjs5qB6M2_4XPPSGNpBYJmV0QOjArqS8/s768/ULTIMATE_EDITION_ELECTRIC_FANG_03.0wd4urd9xwy5..webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 11" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLbVu65RO-qbLWKQvw_lbgq8FA6HPDHFhFSnUPLw-Yvuy-o3q3gmdwv8TT20UHztS7M1MsXk1aDiCzCBhjQbpfCJwcJoWW-GJkLgqv-lXsBkmZhBsJd4558zcYdCwSDmguogk49GNezrs9md3jJZOeLxc5aDBe_uuglpkwnGg_ESp3COupuuzf45I-WHQZ/s320/ULTIMATE_EDITION_ELECTRIC_FANG_04.0p0qga4w7y5yl.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 12" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgVlwWUKDvJSlkuuYx2BZqN9-3eXOl1VcOKJaL5rQdZ2W-WnaaJVkVF7oH-kFX-jSoyVTG2BxYH3kCimdNHUa-O5Sw8RGVRoYxb27Hq6Gjphg6QZARMNaWYt2Wn0h5PXInIABx5LEHpUeaFq0qh1baLQQXCkcJKUtzG-iEFReJ3DpL0HxmLJne4cOWfscxn/s768/ULTIMATE_EDITION_ONE_EYED_WILLIE_01.0n7-__or5f.b6.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 13" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh9ssD-63_CVNgFhNPKZWeDty9_8evsA0jTH4q6BJdwSawdN9MGqg0v2G_Jf1dNJkZiUJEpz9Q9E_h-EaVE4athxSLBzUd1D_czC-MDGMv_qVfBGv3zaEzy3BAUvPplVKi1229Gu_ReZUP9562lGB5nZVGbEYtgvbu-aff0Bb-xCHH6LDwcUeGT-83ekmnd/s768/ULTIMATE_EDITION_PTT_STORE_01.0seuocb\~7b1-q.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 14" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgpYyvFux5Isz805u-EZc-hFrqNiNuzUtGPab0fPtKkR6CueQW3BUMbaXddMcpfIex4cXq2hxWLZbqCdrMGkG54kd_bZQSUcM1z9eiV-lDjhCFGL5B6EIcP04rLJKA6hfTzRMeJz30YcaopWbYHHm1w4viEHsfLHVUWaZV0s7Zwmic-OjSnlpw1riyDfFWX/s768/Boobie_Ike_04.0\~1fr6ijgvnzx.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 15" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2htkhKE-cFvjFNvexehk-WkQylm56Ysn2-HeRLsK2Tff4N1UPPGiqcB-j48sjAmgJnIdXeoTUkihiuwuti2FlKD8ilR8s_BwokFJSGUoydG_ezPzDx2_6FeFODuvxdSWPyAe7W-UmE7zgcA4UqO1xJwkaq6gpvfihkq1l5rmN4hnO__HAUN7sEpY8QH7G/s768/DreQuan_Priest_01.0_0\~wi-ipdj35.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 16" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAazW3JGfxHEMlKablakb0J1qcY8V5rDrbLyz-QaxfThGGy0_3SEJpKKdQH_rcX5ppFLP7K1o2nno3Zd6XvrbsIqE5dRQe_ogjd7j233Yzc-XmcpT72vMd1IalDfVSdMRsqI8xDPzpVT2qskmaR9nFls31AQnaDjkeHjkb3c-Z3UDVZJsD5melIhF1_KS6/s768/Real_Dimez_01.0djwwboo8-glx.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 17" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiLv0O4-RNw9Kq4G7kGoR_gJ7VFbSumozsxIN8cj6fGu1SKW055Ey8EHBS1NgwujyZTXK_jG8YkpE1CYnKPaYgvfRM1lLzBrLOESls-3RukQv_oesHpvBlu2WbqzAePar8-0hiuPS9h9r_LqqHSRXg8xOu1roRTZey2oL6YipNQKF0fCdpokf-goOY_ABEb/s768/Real_Dimez_02.1366u9.x.yp0_.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 18" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhFmwAZdGiL6BpCEYflaktqEkIb3Yix6OljWZDcSuS6yhG0UNu2eJWFK7AF0NCK0JZn3i5Q_ud08FRJTEjHJtUwksZkFjetxbqHlZf1zV3n-TmLn35Z7zxTR8DVCwdmFO5VYYa2jsCFUVIXStCm3oG3C8avcQiciNojOqbV4WAxsMwcEAZMD2epediFrYmv/s768/Mount_Kalaga_National_Park_01.0v5fl0f83hjv_.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 19" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEincJaQO-batGTlW4MuoJGL4Fi6PM459bMVss5KcOUc8WHx6llpXDDv3we47LveKt4JfeNyCaMFvyQBHpKDsfmTHB5NGKqV8B3zxr3RATy3Mru9CU6clfC4OAVCTyWWvKca107Cz40UT4xHU2JDLi_VafA1LyZf91r3YNotCg6JkCcPOdPqO483CDSfdz6Z/s768/Jason_and_Lucia_03.15z-.c0tptrzs.webp" class="w-full h-full object-cover flex-shrink-0" alt="Ultimate 20" />
+          </div>
+        </div>
+        <button id="ult-next" class="arrow-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <div class="flex justify-center gap-1.5 mt-2 mb-5" id="ult-dots"></div>
+
+      <div class="info-block mb-5">
+        <h3>Game Info</h3>
+        <p class="mb-2 font-medium">Grand Theft Auto VI is a single-player experience.</p>
+        <p class="mb-2 font-semibold text-gray-900">Vice City, USA.</p>
+        <p class="mb-3">Jason and Lucia have always known the deck is stacked against them. But when an easy score goes wrong, they find themselves on the darkest side of the sunniest place in America, in the middle of a criminal conspiracy stretching across the state of Leonida — forced to rely on each other more than ever if they want to make it out alive.</p>
+        <p class="mb-3">This purchase includes the Ultimate Edition Upgrade with exclusive in-game bonuses for Grand Theft Auto VI, available to Jason and Lucia across their story, with new items uncovered behind each chapter.</p>
+        
+        <p class="font-bold text-gray-900 mb-1">ULTIMATE EDITION UPGRADE</p>
+        <p class="mb-2">Welcome to Leonida, the state where anything goes. Seize everything this massive world has to offer with an exclusive collection of premium vehicles, weapons, apparel, and action threaded across all aspects of Jason and Lucia’s story:</p>
+        
+        <ul>
+          <li><strong>’95 GROTTI CHEETAH:</strong> Grotti's signature mid '90s sports car and ode to Shore Drive, the ’95 Grotti Cheetah is complete with a minimalist, retro-futuristic livery and available to punctuate later-stage action.</li>
+          <li><strong>HAWK & LITTLE MORGAN REVOLVERS:</strong> His and hers versions of this powerful revolver with classic Vice City stylings sourced from the Vercetti Estate, including palm-tree-etched grips, engraved detailing, and high-performance scope.</li>
+          <li><strong>PERSONALIZED WEAPON VARIANTS:</strong> Personalized sidearms with detailed engravings for Jason's Girardi ES9 pistol and Lucia's Klose K17 pistol.</li>
+          <li><strong>VICE CITY STYLE:</strong> Whether poolside or side by side, Jason and Lucia can look the part with exclusive outfits, hairstyles, tattoos, and more.</li>
+          <li><strong>JASON’S SAFEHOUSE VEHICLES:</strong> Switch gears and soak up the sun in an Army fatigue-tinged Dinka Enduro motorcycle or Crest Kayak.</li>
+          <li><strong>GANADO RETRO BUILD:</strong> Inject some muscle and classic stylings into Jason's well-worn Vapid Ganado low-riding pickup with exclusive mods.</li>
+          <li><strong>SHITZU SQUALO:</strong> Perfect for casting in Gambit Bay and reeling in catches of all sorts, this gradient pink and blue Squalo docked at Washington Beach is made open-ocean-ready with an explosives-laden weapons crate.</li>
+          <li><strong>’67 VAPID DOMINATOR BUGGY & GARAGE:</strong> A Mud Club monster offering impressive off-road handling for the backwoods of Mount Kalaga and beyond. Conveniently store it at the Paradise Garage in Watson Bay, which features a weapon locker plus a secure place to deposit stolen goods to be fenced.</li>
+          <li><strong>GOODTIME GEAR:</strong> A capsule collection of apparel and accessories inspired by the Goodtime State’s hit TV show character, Macca the Gator.</li>
+          <li><strong>PTT YOUNGIN$ COMPOUND:</strong> Raid the compound of one of Southside Vice City’s loudest and most socially active gangs and escape safely to score some special items and distinct contraband.</li>
+          <li><strong>CLASSIC CAR COLLECTION:</strong> Track down a variety of abandoned classic and work-in-progress project cars and revitalize them to their former glory in this special commission from eccentric collector and local fixer, Wyman.</li>
+        </ul>
+
+        <p class="font-bold text-gray-900 mt-4 mb-1">Special Destinations Only Open for Business with the Ultimate Edition:</p>
+        <ul>
+          <li><strong>RIDEOUT CUSTOMS:</strong> Transform vanilla vehicles into magnificent works of art with detailed interiors, exquisite rims, and donk stylings.</li>
+          <li><strong>SARA'S UNISEX SALON:</strong> Get signature salon styles for both Jason and Lucia, including facial hair for Jason and makeup and nails for Lucia.</li>
+          <li><strong>STOCK 305:</strong> Style various unique and exclusive looks for Jason and Lucia at Stockyard’s premier destination for elevated streetwear.</li>
+          <li><strong>ELECTRIC FANG TATTOO:</strong> Choose from over 50 signature tattoos for both Jason and Lucia — all designed by the artist collective FAILE at Stockyard’s most iconic ink bar.</li>
+          <li><strong>ONE-EYED WILLIE’S:</strong> Visit Lake Leonida’s storied mod shop, specializing in off-road modifications and hand-painted automotive artistry.</li>
+        </ul>
+
+        <ul class="meta-list">
+          <li><strong>Platform:</strong> PlayStation 5, Xbox Series X|S</li>
+          <li><strong>Release:</strong> 19/11/2026</li>
+          <li><strong>Publisher:</strong> Rockstar Games</li>
+          <li><strong>Genres:</strong> Action</li>
+        </ul>
+      </div>
+
+      <div class="info-block pb-4">
+        <h3>Legal Info</h3>
+        <p class="mb-2">Pre-order Grand Theft Auto VI and get one month of GTA+ on PlayStation 5 and Xbox Series X|S at no extra cost. Subscription continues until cancelled.</p>
+        <p class="mb-2">Offer ends 19th November 2026.</p>
+        <p class="mb-2">You can download and play this content on 19/11/2026.</p>
+        <p class="mb-2">Must be redeemed by 31st March 2027.</p>
+        <p class="font-bold text-gray-900 mt-3 mb-1">PRE-ORDER – IMMEDIATE PAYMENT REQUIRED</p>
+        <p class="mb-1">Purchase prior to 19 November 2026 at 23:59:59 to receive:</p>
+        <ul>
+          <li>The Ultimate Vice City Pack</li>
+          <li>One Month of GTA+</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STANDARD PANEL -->
+    <div id="panel-standard" class="panel">
+      <div class="top-header">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEip-62wQrSgM_I_fMyEFyyTyufaumWxt_FUaSwQE2FPVfOK8GlzO1KnFigzISnLgF9OLXKkNQ2WaN7zvUTV43tKkg63Dptepx3YPtvb6BXFlZGfWJnXEGOqPpJFzG3zZoJi0qRGI6SE222anIdZU-TxrNM8H82yCLP1wbxVMorlJvgMXNBKolxLlb4X683J/s776/20260917_082145.jpg" alt="Logo" class="logo" />
+        <h1 class="text-lg sm:text-xl font-black tracking-tight">Grand Theft Auto : Vintage</h1>
+      </div>
+
+      <div class="flex items-center w-full px-1">
+        <button id="std-prev" class="arrow-btn"><i class="fas fa-chevron-left"></i></button>
+        <div class="image-area relative overflow-hidden border border-gray-200 bg-gray-50 aspect-[16/9]">
+          <div id="std-track" class="carousel-track flex h-full w-full">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6m8JpRSCbZS1ktm13yFUJDM66xrYuTJvYHhyELBk1ioxpclrx7wIjW4OEK069yD9GGLXUFXM-Lz2CwjI5D_xc512iKxmaFBgmQ5styT80zMCF2NbIdn1OOE_rqM3aXZ-lTgGOspOJN31wRghvy1sGylMxqH93MHIcU1zyOI5PtSuHPtlJhHr7XGGTGPJ_/s768/VINTAGE_VICE_CITY_PACK_02.14mvx9a15z8jv.webp" class="w-full h-full object-cover flex-shrink-0" alt="Standard 1" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgmp0NNcmJeo_HkPz4k7vezHJR6DXWiIhya5PLuR2WouIN2YlYvc0z266c6xIdsNtacXbmqDxZvh4nkNYXC5AzO1S5EYSUT779RKx8uQwH7eCzSfO6YQTfMyTu3xY9-mIdyvd5Z8rCa2sb3t2XwSEivOfAEZJbC1LfPPTO61f0uDPHyJWxRi6jj7vA9sL9T/s768/VINTAGE_VICE_CITY_PACK_VAPID_STANIER_02.0s2wun4_vzld2.webp" class="w-full h-full object-cover flex-shrink-0" alt="Standard 2" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhCtEhUHhUbMWYzWikNrzOFYo4iC7uOIXgctKkXUqBKVeKBUpzpaGHFQM70qohjrn39rqOWIS6aOLoZpLqZmBvnaPVHrYwmqHJnyBtujLl7uFgvBfPrIvV9XeGQAcGr-CAOS4PiFUiihrqZz9Vk089LDrK0q1sUnpV329Ewwz03P3zEISF3340ts4vNcvCp/s768/VINTAGE_VICE_CITY_PACK_EXCLUSIVE_LOOKS_01.15zo0h-xdm91b.webp" class="w-full h-full object-cover flex-shrink-0" alt="Standard 3" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj71DGC3OpIYOwcCqr-rETvA-ygR25Pahb57wc8x_q3vBukxlE2s7fuZqR93-OAWFm-2wVcoK_97exYzmw4-gTs05POvzJLpF-vWOC-zii9ughlJr-IKpaftEUhAoOu1le9_QuYNhAb6paG2N0c4ebVqV3j2D51CN2Tlae4MVNqdS0cmWG9k2tAJKvV9k0a/s768/VINTAGE_VICE_CITY_WEAPON_PATTERN_01.0gybtumgwdcoi.webp" class="w-full h-full object-cover flex-shrink-0" alt="Standard 4" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGuJUNMz1Mm6E8e1aYhmaFg2PpptevTxtjQk-DvQrBs9R1b7UAeksx-9BCKbOkOxCmFE0S6yPM-XfylUqdIHAOrlBHJmM0oLAgMo9AkD2x5S5jFt2R3TtBXjF4ryw0MnrW-oGdoBCbweDQ5E32s6abq7OkSxETJbtgP1PWwTO8-6y9uj3L49x-KPgC8X6S/s768/VINTAGE_VICE_CITY_PACK_EXCLUSIVE_LOOKS_03.0au1tphsftqm5.webp" class="w-full h-full object-cover flex-shrink-0" alt="Standard 5" />
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg3Uc8kqZGkBpU9XjN_RG8wnzMw2m7KreF5xYkJBMZAeAxbkUHgaq-ZMQXNiobQoLNef1Umv1fF23bfJC4EkLh8gNcvPN_nNHdhvhi4frd2AX7smFanD5lyal6muQQNY8FLue2sKxkXKXXxG2SfLldO0iLTWAejVKTscbQmrlzXnduHSmR4vv3TVc_KjLHY/s768/VINTAGE_VICE_CITY_PACK_EXCLUSIVE_LOOKS_04.04mve901t8b.i.webp" class="w-full h-full object-cover flex-shrink-0" alt="Standard 6" />
+          </div>
+        </div>
+        <button id="std-next" class="arrow-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <div class="flex justify-center gap-1.5 mt-2 mb-5" id="std-dots"></div>
+
+      <div class="info-block mb-5">
+        <h3>Game Info</h3>
+        <p class="mb-2 font-medium">Grand Theft Auto VI is a single-player experience.</p>
+        <p class="mb-2 font-semibold text-gray-900">Vice City, USA.</p>
+        <p class="mb-3">Jason and Lucia have always known the deck is stacked against them. But when an easy score goes wrong, they find themselves on the darkest side of the sunniest place in America, in the middle of a criminal conspiracy stretching across the state of Leonida — forced to rely on each other more than ever if they want to make it out alive.</p>
+        
+        <ul class="meta-list">
+          <li><strong>Platform:</strong> PlayStation 5, Xbox Series X|S</li>
+          <li><strong>Release:</strong> 19/11/2026</li>
+          <li><strong>Publisher:</strong> Rockstar Games</li>
+          <li><strong>Genres:</strong> Action</li>
+        </ul>
+      </div>
+
+      <div class="info-block pb-4">
+        <h3>Legal Info</h3>
+        <p class="mb-2">Pre-order Grand Theft Auto VI and get one month of GTA+ on PlayStation 5 and Xbox Series X|S at no extra cost. Subscription continues until cancelled.</p>
+        <p class="mb-2">Offer ends 19th November 2026.</p>
+        <p class="mb-2">You can download and play this content on 19/11/2026.</p>
+        <p class="mb-2">Must be redeemed by 31st March 2027.</p>
+        <p class="font-bold text-gray-900 mt-3 mb-1">PRE-ORDER – IMMEDIATE PAYMENT REQUIRED</p>
+        <p class="mb-1">Purchase prior to 19 November 2026 at 23:59:59 to receive:</p>
+        <ul>
+          <li>The Vintage Vice City Pack</li>
+          <li>One Month of GTA+</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Fixed bottom bar (15vh) -->
+  <div class="fixed-bar">
+    <div class="fixed-tabs">
+      <button id="fixed-ultimate" class="fixed-tab active">
+        <span class="multi-circle"></span>
+        Ultimate
+      </button>
+      <button id="fixed-standard" class="fixed-tab">
+        <span class="multi-circle"></span>
+        Standard
+      </button>
+    </div>
+    <button id="preorder-btn" class="preorder-btn">
+      Pre Order <span class="price-num">99.99$</span>
+    </button>
+    <div class="pay-with">
+      <span>Pay with</span>
+      <div class="crypto-stack">
+        <img class="crypto-icon" src="https://s3-symbol-logo.tradingview.com/crypto/XTVCBTC--big.svg" alt="BTC" />
+        <img class="crypto-icon" src="https://s3-symbol-logo.tradingview.com/crypto/XTVCETH--big.svg" alt="ETH" />
+        <img class="crypto-icon" src="https://s3-symbol-logo.tradingview.com/crypto/XTVCUSDT--big.svg" alt="USDT" />
+        <img class="crypto-icon" src="https://s3-symbol-logo.tradingview.com/crypto/XTVCUSDC--big.svg" alt="USDC" />
+        <img class="crypto-icon" src="https://s3-symbol-logo.tradingview.com/crypto/XTVCSOL--big.svg" alt="SOL" />
+        <img class="crypto-icon" src="https://s3-symbol-logo.tradingview.com/crypto/XTVCTRX--big.svg" alt="TRX" />
+      </div>
+      <span class="more-text">+20 more</span>
+    </div>
+  </div>
+
+  <script>
+    const urls = {
+      standard: "https://store.example.com/gta6-standard",
+      ultimate: "https://store.example.com/gta6-ultimate"
+    };
+
+    const prices = {
+      standard: "79.99$",
+      ultimate: "99.99$"
+    };
+
+    const fixedStd = document.getElementById('fixed-standard');
+    const fixedUlt = document.getElementById('fixed-ultimate');
+    const panelStd = document.getElementById('panel-standard');
+    const panelUlt = document.getElementById('panel-ultimate');
+    const preorderBtn = document.getElementById('preorder-btn');
+
+    let currentEdition = 'ultimate';
+
+    function updatePreorderButton(edition) {
+      preorderBtn.innerHTML = `Pre Order <span class="price-num">${prices[edition]}</span>`;
+    }
+
+    function switchTab(which) {
+      currentEdition = which;
+      const isStd = which === 'standard';
+      fixedStd.classList.toggle('active', isStd);
+      fixedUlt.classList.toggle('active', !isStd);
+      panelStd.classList.toggle('active', isStd);
+      panelUlt.classList.toggle('active', !isStd);
+      updatePreorderButton(which);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    fixedStd.addEventListener('click', () => switchTab('standard'));
+    fixedUlt.addEventListener('click', () => switchTab('ultimate'));
+
+    preorderBtn.addEventListener('click', () => {
+      const link = urls[currentEdition];
+      if (link) window.open(link, '_blank');
+    });
+
+    function createCarousel(trackId, prevId, nextId, dotsContainerId) {
+      const track = document.getElementById(trackId);
+      const total = track.children.length;
+      let index = 0;
+      const dotsContainer = document.getElementById(dotsContainerId);
+
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'dot' + (i === 0 ? ' active' : '');
+        btn.dataset.i = i;
+        dotsContainer.appendChild(btn);
+      }
+      const dots = dotsContainer.querySelectorAll('.dot');
+
+      function goTo(i) {
+        if (i < 0) i = total - 1;
+        if (i >= total) i = 0;
+        index = i;
+        track.style.transform = `translateX(-${index * 100}%)`;
+        dots.forEach((d, di) => d.classList.toggle('active', di === index));
+      }
+
+      document.getElementById(prevId).addEventListener('click', () => goTo(index - 1));
+      document.getElementById(nextId).addEventListener('click', () => goTo(index + 1));
+      dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
+    }
+
+    createCarousel('ult-track', 'ult-prev', 'ult-next', 'ult-dots');
+    createCarousel('std-track', 'std-prev', 'std-next', 'std-dots');
+  </script>
+</body>
+</html>
