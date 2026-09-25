@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Button</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0d0e12;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .share-btn:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .share-btn:active {
+            transform: scale(0.98);
+        }
+
+        .share-btn.copied {
+            background-color: #22c55e !important;
+            color: #ffffff !important;
+        }
+
+        .share-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="share-btn" id="shareBtn">
+        <svg viewBox="0 0 24 24">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        <span id="btnText">Share Now</span>
+    </button>
+
+    <script>
+        function getValidUrl() {
+            try {
+                const currentUrl = window.location.href;
+                if (currentUrl.startsWith('http://') || currentUrl.startsWith('https://')) {
+                    return currentUrl;
+                }
+            } catch (e) {}
+            return 'https://example.com';
+        }
+
+        const shareData = {
+            title: 'Mirage Innovation',
+            text: 'Discover the foundation of innovation.',
+            url: getValidUrl()
+        };
+
+        const shareBtn = document.getElementById('shareBtn');
+        const btnText = document.getElementById('btnText');
+
+        shareBtn.addEventListener('click', async () => {
+            // Trigger Native Share Sheet (Mobile / Supported Browsers)
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                }
+            }
+
+            // Copy Fallback 1: Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                try {
+                    await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+                    triggerSuccess();
+                    return;
+                } catch (err) {}
+            }
+
+            // Copy Fallback 2: Legacy Copy Method
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = `${shareData.text}\n${shareData.url}`;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                triggerSuccess();
+            } catch (err) {
+                alert('Copying link failed.');
+            }
+        });
+
+        function triggerSuccess() {
+            const originalText = btnText.textContent;
+            btnText.textContent = 'Link Copied!';
+            shareBtn.classList.add('copied');
+            
+            setTimeout(() => {
+                btnText.textContent = originalText;
+                shareBtn.classList.remove('copied');
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
