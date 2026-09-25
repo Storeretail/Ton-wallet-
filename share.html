@@ -1,151 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Share Button</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boost — Meme Throne</title>
+  <meta name="description" content="Boost Meme Throne on X and share with your network. Help the community grow." />
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #0d0e12;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
 
-        .share-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: #ffffff;
-            color: #000000;
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --accent: #AC1301;
+      --accent-soft: rgba(172, 19, 1, 0.1);
+      --border: #E2E8F0;
+      --surface: #F8FAFC;
 
-        .share-btn:hover {
-            background-color: #f1f5f9;
-            transform: translateY(-1px);
-        }
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+    }
 
-        .share-btn:active {
-            transform: scale(0.98);
-        }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .share-btn.copied {
-            background-color: #22c55e !important;
-            color: #ffffff !important;
-        }
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-        .share-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-    </style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -25%, rgba(172, 19, 1, 0.07), transparent);
+    }
+
+    .page-wrapper {
+      width: 100%;
+      max-width: 460px;
+      padding: 0 16px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Badge */
+    .badge-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(172, 19, 1, 0.22);
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #AC1301;
+      margin: 6px 0 12px 0;
+    }
+
+    .badge-banner::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      background: #AC1301;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2.5px rgba(172, 19, 1, 0.28);
+    }
+
+    /* Logo + Title row */
+    .logo-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.04),
+        0 6px 14px -3px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.5rem, 9vw, 3.2rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: #AC1301;
+    }
+
+    /* Social proof – full line in theme color + bigger */
+    .social-proof {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 18px;
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #AC1301;
+    }
+
+    .social-proof .count {
+      font-weight: 800;
+      font-size: 1.1em;
+    }
+
+    .social-proof .pulse {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      flex-shrink: 0;
+    }
+
+    .social-proof .pulse::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #10B981;
+      border-radius: 50%;
+    }
+
+    .social-proof .pulse::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      background: #10B981;
+      border-radius: 50%;
+      opacity: 0.35;
+      animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+    }
+
+    /* Tagline */
+    .tagline {
+      font-size: clamp(1.05rem, 2.6vw, 1.18rem);
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .tagline .highlight {
+      font-weight: 800;
+      color: #AC1301;
+    }
+
+    /* Description */
+    .desc {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      max-width: 380px;
+    }
+
+    .desc .accent {
+      font-weight: 700;
+      color: #AC1301;
+    }
+
+    /* Buttons */
+    .cta-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      height: 46px;
+      padding: 0 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.02rem;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+      color: #fff;
+    }
+
+    .btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* Boost on X */
+    .btn-x {
+      background: #000000;
+      box-shadow:
+        0 4px 0 #1a1a1a,
+        0 5px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-x:hover {
+      background: #0d0d0d;
+      transform: translateY(-1px);
+      box-shadow:
+        0 5px 0 #1a1a1a,
+        0 7px 16px rgba(0, 0, 0, 0.36);
+    }
+
+    .btn-x:active {
+      transform: translateY(3px);
+      box-shadow:
+        0 1px 0 #1a1a1a,
+        0 2px 5px rgba(0, 0, 0, 0.22);
+    }
+
+    /* Share button */
+    .btn-share {
+      background: #AC1301;
+      box-shadow:
+        0 4px 0 #7A0E01,
+        0 5px 12px rgba(172, 19, 1, 0.32);
+    }
+
+    .btn-share:hover {
+      background: #9A1101;
+      transform: translateY(-1px);
+      box-shadow:
+        0 5px 0 #7A0E01,
+        0 7px 16px rgba(172, 19, 1, 0.38);
+    }
+
+    .btn-share:active {
+      transform: translateY(3px);
+      box-shadow:
+        0 1px 0 #7A0E01,
+        0 2px 5px rgba(172, 19, 1, 0.25);
+    }
+
+    .btn-share.copied {
+      background: #16a34a !important;
+      box-shadow:
+        0 4px 0 #15803d,
+        0 5px 12px rgba(22, 163, 74, 0.35) !important;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid #AC1301;
+      outline-offset: 3px;
+    }
+
+    .note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      max-width: 340px;
+    }
+  </style>
 </head>
 <body>
+  <div class="page-wrapper">
 
-    <button class="share-btn" id="shareBtn">
-        <svg viewBox="0 0 24 24">
-            <circle cx="18" cy="5" r="3"></circle>
-            <circle cx="6" cy="12" r="3"></circle>
-            <circle cx="18" cy="19" r="3"></circle>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    <div class="badge-banner">
+      Community Boost
+    </div>
+
+    <div class="logo-title-row">
+      <img
+        src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgU6StuAuDT1o4in1lX-Fj8pPYZShmCUPMWACQml8z61V0W96SULxC6Ano1nWwY3uaTbj4od0EGtsvCOonv9WJniBHUMIInj4Fs37HX-KYw37GyrWPcd8YE-SrLC2rUNuUHDQMz2avGM_8uan2t32zfgCdxxA6sjtfUmKBf9ppaQhSXLX4Jfxo1QIbJlfUI/s2000/Sjsjs_20260923_175435_0000.png"
+        alt="Meme Throne Logo"
+        class="brand-logo"
+      />
+      <h1 class="page-title">BOOST</h1>
+    </div>
+
+    <!-- Full line in theme color + bigger size -->
+    <div class="social-proof">
+      <span class="pulse"></span>
+      <span><span class="count" id="member-count">0</span>+ members already gave a boost</span>
+    </div>
+
+    <p class="tagline">
+      Spread the <span class="highlight">word</span>. Grow the <span class="highlight">Throne</span>.
+    </p>
+
+    <p class="desc">
+      Help the community reach more degens.  
+      One share can bring the next wave of builders.  
+      <span class="accent">Your boost matters.</span>
+    </p>
+
+    <div class="cta-group">
+      <button class="btn btn-x" id="btn-boost-x" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
         </svg>
-        <span id="btnText">Share Now</span>
-    </button>
+        Boost on X
+      </button>
 
-    <script>
-        function getValidUrl() {
-            try {
-                const currentUrl = window.location.href;
-                if (currentUrl.startsWith('http://') || currentUrl.startsWith('https://')) {
-                    return currentUrl;
-                }
-            } catch (e) {}
-            return 'https://example.com';
+      <button class="btn btn-share" id="btn-share" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+        </svg>
+        <span id="share-btn-text">Share on Social Media</span>
+      </button>
+    </div>
+
+    <p class="note">
+      Every share helps more degens discover the community-owned launchpad.
+    </p>
+
+  </div>
+
+  <script>
+    // ========== Animated counter ==========
+    const counterEl = document.getElementById('member-count');
+    const target = 500;
+    const duration = 1800;
+    let startTime = null;
+
+    function animateCount(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      counterEl.textContent = Math.floor(eased * target);
+      if (progress < 1) {
+        requestAnimationFrame(animateCount);
+      } else {
+        counterEl.textContent = target;
+      }
+    }
+    requestAnimationFrame(animateCount);
+
+    // ========== Shared content ==========
+    const shareText = `🚀 Join the community-owned meme coin launchpad!
+
+Meme Throne — where degens build, launch & rule together.
+
+One Vision. One Goal. One Throne.
+
+👉 https://t.me/memethrone
+🐦 https://x.com/memethrone`;
+
+    function getValidUrl() {
+      try {
+        const currentUrl = window.location.href;
+        if (currentUrl.startsWith('http://') || currentUrl.startsWith('https://')) {
+          return currentUrl;
         }
+      } catch (e) {}
+      return 'https://x.com/memethrone';
+    }
 
-        const shareData = {
-            title: 'Mirage Innovation',
-            text: 'Discover the foundation of innovation.',
-            url: getValidUrl()
-        };
+    const shareData = {
+      title: 'Meme Throne — Community Meme Coin Launchpad',
+      text: shareText,
+      url: getValidUrl()
+    };
 
-        const shareBtn = document.getElementById('shareBtn');
-        const btnText = document.getElementById('btnText');
+    // ========== Boost on X ==========
+    document.getElementById('btn-boost-x').addEventListener('click', function () {
+      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+      window.open(tweetUrl, '_blank', 'noopener,noreferrer');
+    });
 
-        shareBtn.addEventListener('click', async () => {
-            // Trigger Native Share Sheet (Mobile / Supported Browsers)
-            if (navigator.share) {
-                try {
-                    await navigator.share(shareData);
-                    return;
-                } catch (err) {
-                    if (err.name === 'AbortError') return;
-                }
-            }
+    // ========== Share on Social Media (reference logic) ==========
+    const shareBtn = document.getElementById('btn-share');
+    const shareBtnText = document.getElementById('share-btn-text');
 
-            // Copy Fallback 1: Clipboard API
-            if (navigator.clipboard && window.isSecureContext) {
-                try {
-                    await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
-                    triggerSuccess();
-                    return;
-                } catch (err) {}
-            }
-
-            // Copy Fallback 2: Legacy Copy Method
-            try {
-                const textarea = document.createElement('textarea');
-                textarea.value = `${shareData.text}\n${shareData.url}`;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                triggerSuccess();
-            } catch (err) {
-                alert('Copying link failed.');
-            }
-        });
-
-        function triggerSuccess() {
-            const originalText = btnText.textContent;
-            btnText.textContent = 'Link Copied!';
-            shareBtn.classList.add('copied');
-            
-            setTimeout(() => {
-                btnText.textContent = originalText;
-                shareBtn.classList.remove('copied');
-            }, 2000);
+    shareBtn.addEventListener('click', async () => {
+      // 1. Native Web Share API
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
         }
-    </script>
+      }
 
+      // 2. Clipboard API fallback
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(`\( {shareData.text}\n \){shareData.url}`);
+          triggerSuccess();
+          return;
+        } catch (err) {}
+      }
+
+      // 3. Legacy copy fallback
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = `\( {shareData.text}\n \){shareData.url}`;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        triggerSuccess();
+      } catch (err) {
+        alert('Copying link failed.');
+      }
+    });
+
+    function triggerSuccess() {
+      const originalText = shareBtnText.textContent;
+      shareBtnText.textContent = 'Link Copied!';
+      shareBtn.classList.add('copied');
+
+      setTimeout(() => {
+        shareBtnText.textContent = originalText;
+        shareBtn.classList.remove('copied');
+      }, 2000);
+    }
+  </script>
 </body>
 </html>
